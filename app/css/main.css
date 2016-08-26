@@ -1,0 +1,4 @@
+.logo > a:hover,
+.logo > a:focus {
+  text-decoration: none;
+}
