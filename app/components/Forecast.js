@@ -1,6 +1,5 @@
 var React = require('react');
-var weatherHelpers = require('../utils/weatherHelpers');
-var Loading = require('../components/Loading');
+var PropTypes = React.PropTypes;
 var moment = require('moment');
 
 var styles = {
@@ -43,70 +42,40 @@ var styles = {
   },
 };
 
-var Forecast = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.object.isRequired,
-  },
-  getInitialState: function() {
-    return {
-      forecast: [],
-      isLoading: true,
-    };
-  },
-  componentDidMount: function() {
-    var city = this.props.params.city;
-    weatherHelpers.getForecastForCity(city)
-      .then(function(forecast) {
-        console.log(forecast);
-        this.setState({
-          forecast: forecast,
-          isLoading: false,
-        });
-      }.bind(this));
-  },
-  transitionToDetailView: function(day) {
-    this.context.router.push({
-      pathname: '/detail/' + this.props.params.city,
-      state: {
-        dayData: day,
-      },
-    });
-  },
-  render: function() {
-    var city = this.props.params.city;
-    var forecast = this.state.forecast.slice(0, 5);
-    var fiveDayForecast = forecast.map(function(day, i) {
-      var iconClasses = 'wi wi-owm-' + day.weather[0].id;
-      var date = moment.unix(day.dt).format('dddd, MMM DD');
-      return (
-        <div className="day-forecast" key={i} onClick={function() {
-          this.context.router.push({
-            pathname: '/detail/' + this.props.params.city,
-            state: {
-              dayData: day,
-            },
-          });
-        }.bind(this)} style={styles.dayForecast}>
-          <i className={iconClasses} style={styles.weatherIcon} />
-          <h2 className="date" style={styles.date}>{date}</h2>
-        </div>
-      );
-    }.bind(this));
-
-    if (this.state.isLoading) {
-      return <Loading />;
-    }
-
+function Forecast(props) {    
+  var fiveDayForecast = props.forecast.map(function(day, i) {
+    var iconClasses = 'wi wi-owm-' + day.weather[0].id;
+    var date = moment.unix(day.dt).format('dddd, MMM DD');
     return (
-      <div className="forecast-view">
-        <h1 style={styles.h1}>{city}</h1>
-        <h3 style={styles.h3}>Select a day</h3>
-        <div className="five-day-forecast" style={styles.fiveDayForecast}>
-          {fiveDayForecast}
-        </div>
+      <div className="day-forecast" key={i} onClick={function() {
+        props.router.push({
+          pathname: '/detail/' + props.city,
+          state: {
+            dayData: day,
+          },
+        });
+      }} style={styles.dayForecast}>
+        <i className={iconClasses} style={styles.weatherIcon} />
+        <h2 className="date" style={styles.date}>{date}</h2>
       </div>
     );
-  },
-});
+  });
+
+  return (
+    <div className="forecast-view">
+      <h1 style={styles.h1}>{props.city}</h1>
+      <h3 style={styles.h3}>Select a day</h3>
+      <div className="five-day-forecast" style={styles.fiveDayForecast}>
+        {fiveDayForecast}
+      </div>
+    </div>
+  );
+}
+
+Forecast.propTypes = {
+  city: PropTypes.string.isRequired,
+  forecast: PropTypes.array.isRequired,
+  router: PropTypes.object.isRequired,
+};
 
 module.exports = Forecast;

@@ -1,5 +1,4 @@
 var React = require('react');
-var weatherHelpers = require('../utils/weatherHelpers');
 var styles = {
   patternBg: {
     display: 'flex',
@@ -30,29 +29,22 @@ var styles = {
   },
 };
 
-var Home = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.object.isRequired,
-  },
-  handleSubmit: function(e) {
-    e.preventDefault();
-    var cityInput = e.target.getElementsByClassName('city-input')[0];
-    var city = cityInput.value || '';
-    this.context.router.push('/forecast/' + city);
-  },
-  render: function() {
-    return (
-      <div className="home" style={styles.patternBg}>
-        <div className="main-form-section">
-          <h1 className="main-heading" style={styles.mainHeading}>Enter a City and State</h1>
-          <form className="main-form" onSubmit={this.handleSubmit} style={styles.mainForm}>
-            <input type="text" className="form-control city-input" placeholder="St. George, Utah" style={styles.cityInput} />
-            <button className="btn btn-success btn-submit" style={styles.btnSubmit}>Get Weather</button>
-          </form>
-        </div>
+function Home(props) {
+  return (
+    <div className="home" style={styles.patternBg}>
+      <div className="main-form-section">
+        <h1 className="main-heading" style={styles.mainHeading}>Enter a City and State</h1>
+        <form className="main-form" onSubmit={props.handleSubmit} style={styles.mainForm}>
+          <input type="text" className="form-control city-input" placeholder="St. George, Utah" style={styles.cityInput} />
+          <button className="btn btn-success btn-submit" style={styles.btnSubmit}>Get Weather</button>
+        </form>
       </div>
-    );
-  }
-});
+    </div>
+  );
+}
+
+Home.propTypes = {
+  handleSubmit: React.PropTypes.func.isRequired,
+};
 
 module.exports = Home;
